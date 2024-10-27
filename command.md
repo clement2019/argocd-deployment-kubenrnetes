@@ -20,22 +20,53 @@ kubelet: Running
 apiserver: Running
 kubeconfig: Configured
 
-# Forward Ports
+# to install argocd on kubernetes cluster to monitor and control your kuberntes worklow/workload
+
+
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+
+# to check if argocd pods afe running on the argo cd namespace
+kubectl get pods -n argocd
+
+argocd-application-controller-0                    1/1     Running   4 (4m17s ago)    9d
+argocd-applicationset-controller-6b6c76c96-754c2   1/1     Running   4 (4m18s ago)    9d
+argocd-dex-server-8bc648f66-rck5k                  1/1     Running   4 (4m19s ago)    9d
+argocd-notifications-controller-7fb7c99cdb-tgjsk   1/1     Running   19 (4m19s ago)   9d
+argocd-redis-65c8584965-j4bwn                      1/1     Running   4 (4m19s ago)    9d
+argocd-repo-server-554fd64cbb-lz7bp                1/1     Running   15 (4m19s ago)   9d
+argocd-server-6dcbfcb5d5-twlr5 
+
+# to check for the argo cd service
+
 k get services -n argocd
+
+NAME                                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+argocd-applicationset-controller          ClusterIP   10.97.69.80      <none>        7000/TCP,8080/TCP            9d
+argocd-dex-server                         ClusterIP   10.97.166.79     <none>        5556/TCP,5557/TCP,5558/TCP   9d
+argocd-metrics                            ClusterIP   10.101.25.241    <none>        8082/TCP                     9d
+argocd-notifications-controller-metrics   ClusterIP   10.96.156.23     <none>        9001/TCP                     9d
+argocd-redis                              ClusterIP   10.108.150.55    <none>        6379/TCP                     9d
+argocd-repo-server                        ClusterIP   10.110.210.139   <none>        8081/TCP,8084/TCP            9d
+argocd-server                             ClusterIP   10.99.238.98     <none>        80/TCP,443/TCP               9d
+argocd-server-metrics                     ClusterIP   10.102.196.231   <none>        8083/TCP 
+
+# now select the service argocd-server and port forward on it in the namespace to get the argocd gui as shown below
+# run it on your terminal
+
 kubectl port-forward service/argocd-server -n argocd 8080:443
 Forwarding from 127.0.0.1:8080 -> 8080
 
 
-#use below to get the argo cd ui
+# use below to get the argocd Gui locally on the browser
 127.0.0.1:8080
 
+# click  advanced button and click the Proceed to 127.0.0.1 (unsafe) and view the GUI
 
 
 
-
-
-# Get Credentials
-#The usernemae is admin but use the below to get the passowrd
+# To get Credentials to login
+# The usernemae is admin but use the below to get the passowrd
 
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 
